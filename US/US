@@ -1,0 +1,364 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import pandas as pd\n",
+    "import numpy as np\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "fileb=\"usbirth.csv\"\n",
+    "filep=\"uspop.csv\"\n",
+    "filed=\"usdeaths.csv\"\n",
+    "filedivorce=\"usdivorce.xlsm\"\n",
+    "\n",
+    "birth=pd.read_csv(fileb)\n",
+    "pop=pd.read_csv(filep)\n",
+    "death=pd.read_csv(filed)\n",
+    "divorce=pd.read_excel(filedivorce)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "date                       70\n",
+       " Births per 1000 People    70\n",
+       " Population                70\n",
+       "Total Number of Births     70\n",
+       " Deaths per 1000 People    70\n",
+       "Total Number of Deaths     70\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "newbirth=birth.loc[0:69]\n",
+    "pbirth=birth.loc[70:]\n",
+    "newpop=pop.loc[0:69]\n",
+    "ppop=pop.loc[70:]\n",
+    "newdeath=death.loc[0:69]\n",
+    "pdeath=death.loc[70:]\n",
+    "newbirth=newbirth.drop(columns=[\" Annual % Change\"])\n",
+    "newdeath=newdeath.drop(columns=[\" Annual % Change\"])\n",
+    "newpop=newpop.drop(columns=[\" Annual % Change\"])\n",
+    "bp=pd.merge(newbirth,newpop,how='left',on=\"date\")\n",
+    "\n",
+    "bp.head()\n",
+    "\n",
+    "bp[\"Total Number of Births\"]=((bp[\" Births per 1000 People\"]*bp[\" Population\"])/1000)\n",
+    "\n",
+    "bp.head()\n",
+    "\n",
+    "bpd=pd.merge(bp,newdeath,how='left',on='date')\n",
+    "\n",
+    "bpd.head()\n",
+    "\n",
+    "bpd[\"Total Number of Deaths\"]=((bpd[\" Deaths per 1000 People\"]*bpd[\" Population\"])/1000)\n",
+    "bpd.count()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "newdivorce=divorce.loc[83:]\n",
+    "\n",
+    "divorces=newdivorce.drop(columns=[\"Marriages\",\"Year\"])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Divorces</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <td>0</td>\n",
+       "      <td>385000.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td>1</td>\n",
+       "      <td>381000.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td>2</td>\n",
+       "      <td>392000.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td>3</td>\n",
+       "      <td>390000.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td>4</td>\n",
+       "      <td>379000.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td>65</td>\n",
+       "      <td>800909.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td>66</td>\n",
+       "      <td>776288.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td>67</td>\n",
+       "      <td>787251.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td>68</td>\n",
+       "      <td>782038.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td>69</td>\n",
+       "      <td>780035.0</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>70 rows × 1 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "    Divorces\n",
+       "0   385000.0\n",
+       "1   381000.0\n",
+       "2   392000.0\n",
+       "3   390000.0\n",
+       "4   379000.0\n",
+       "..       ...\n",
+       "65  800909.0\n",
+       "66  776288.0\n",
+       "67  787251.0\n",
+       "68  782038.0\n",
+       "69  780035.0\n",
+       "\n",
+       "[70 rows x 1 columns]"
+      ]
+     },
+     "execution_count": 9,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "divorces.reset_index(drop=True, inplace=False)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "metadata": {},
+   "outputs": [
+    {
+     "ename": "ValueError",
+     "evalue": "columns overlap but no suffix specified: Index(['Divorces'], dtype='object')",
+     "output_type": "error",
+     "traceback": [
+      "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+      "\u001b[0;31mValueError\u001b[0m                                Traceback (most recent call last)",
+      "\u001b[0;32m<ipython-input-18-0419664301d4>\u001b[0m in \u001b[0;36m<module>\u001b[0;34m\u001b[0m\n\u001b[1;32m      1\u001b[0m \u001b[0mbpdd\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mbpd\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m      2\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m----> 3\u001b[0;31m \u001b[0mbpdd\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mbpdd\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mjoin\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mdivorces\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m",
+      "\u001b[0;32m/opt/anaconda3/lib/python3.7/site-packages/pandas/core/frame.py\u001b[0m in \u001b[0;36mjoin\u001b[0;34m(self, other, on, how, lsuffix, rsuffix, sort)\u001b[0m\n\u001b[1;32m   7244\u001b[0m         \u001b[0;31m# For SparseDataFrame's benefit\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m   7245\u001b[0m         return self._join_compat(\n\u001b[0;32m-> 7246\u001b[0;31m             \u001b[0mother\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mon\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mon\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mhow\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mhow\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mlsuffix\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mlsuffix\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mrsuffix\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mrsuffix\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0msort\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0msort\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m   7247\u001b[0m         )\n\u001b[1;32m   7248\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n",
+      "\u001b[0;32m/opt/anaconda3/lib/python3.7/site-packages/pandas/core/frame.py\u001b[0m in \u001b[0;36m_join_compat\u001b[0;34m(self, other, on, how, lsuffix, rsuffix, sort)\u001b[0m\n\u001b[1;32m   7267\u001b[0m                 \u001b[0mright_index\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0;32mTrue\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m   7268\u001b[0m                 \u001b[0msuffixes\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mlsuffix\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mrsuffix\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m-> 7269\u001b[0;31m                 \u001b[0msort\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0msort\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m   7270\u001b[0m             )\n\u001b[1;32m   7271\u001b[0m         \u001b[0;32melse\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+      "\u001b[0;32m/opt/anaconda3/lib/python3.7/site-packages/pandas/core/reshape/merge.py\u001b[0m in \u001b[0;36mmerge\u001b[0;34m(left, right, how, on, left_on, right_on, left_index, right_index, sort, suffixes, copy, indicator, validate)\u001b[0m\n\u001b[1;32m     81\u001b[0m         \u001b[0mvalidate\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mvalidate\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m     82\u001b[0m     )\n\u001b[0;32m---> 83\u001b[0;31m     \u001b[0;32mreturn\u001b[0m \u001b[0mop\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mget_result\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m     84\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m     85\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n",
+      "\u001b[0;32m/opt/anaconda3/lib/python3.7/site-packages/pandas/core/reshape/merge.py\u001b[0m in \u001b[0;36mget_result\u001b[0;34m(self)\u001b[0m\n\u001b[1;32m    646\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    647\u001b[0m         llabels, rlabels = _items_overlap_with_suffix(\n\u001b[0;32m--> 648\u001b[0;31m             \u001b[0mldata\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mitems\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mlsuf\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mrdata\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mitems\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mrsuf\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m    649\u001b[0m         )\n\u001b[1;32m    650\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n",
+      "\u001b[0;32m/opt/anaconda3/lib/python3.7/site-packages/pandas/core/reshape/merge.py\u001b[0m in \u001b[0;36m_items_overlap_with_suffix\u001b[0;34m(left, lsuffix, right, rsuffix)\u001b[0m\n\u001b[1;32m   2009\u001b[0m         raise ValueError(\n\u001b[1;32m   2010\u001b[0m             \u001b[0;34m\"columns overlap but no suffix specified: \"\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m-> 2011\u001b[0;31m             \u001b[0;34m\"{rename}\"\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mformat\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mrename\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mto_rename\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m   2012\u001b[0m         )\n\u001b[1;32m   2013\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n",
+      "\u001b[0;31mValueError\u001b[0m: columns overlap but no suffix specified: Index(['Divorces'], dtype='object')"
+     ]
+    }
+   ],
+   "source": [
+    "bpdd=bpd\n",
+    "\n",
+    "bpdd=bpdd.merge(divorces)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>date</th>\n",
+       "      <th>Births per 1000 People</th>\n",
+       "      <th>Population</th>\n",
+       "      <th>Total Number of Births</th>\n",
+       "      <th>Deaths per 1000 People</th>\n",
+       "      <th>Total Number of Deaths</th>\n",
+       "      <th>Divorces</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <td>135</td>\n",
+       "      <td>12/31/17</td>\n",
+       "      <td>12.083</td>\n",
+       "      <td>325084756</td>\n",
+       "      <td>3.927999e+06</td>\n",
+       "      <td>8.580</td>\n",
+       "      <td>2.789227e+06</td>\n",
+       "      <td>NaN</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td>136</td>\n",
+       "      <td>12/31/18</td>\n",
+       "      <td>11.968</td>\n",
+       "      <td>327096265</td>\n",
+       "      <td>3.914688e+06</td>\n",
+       "      <td>8.685</td>\n",
+       "      <td>2.840831e+06</td>\n",
+       "      <td>NaN</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td>137</td>\n",
+       "      <td>12/31/18</td>\n",
+       "      <td>11.968</td>\n",
+       "      <td>327096265</td>\n",
+       "      <td>3.914688e+06</td>\n",
+       "      <td>8.685</td>\n",
+       "      <td>2.840831e+06</td>\n",
+       "      <td>NaN</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td>138</td>\n",
+       "      <td>12/31/19</td>\n",
+       "      <td>11.979</td>\n",
+       "      <td>329064917</td>\n",
+       "      <td>3.941869e+06</td>\n",
+       "      <td>8.782</td>\n",
+       "      <td>2.889848e+06</td>\n",
+       "      <td>NaN</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td>139</td>\n",
+       "      <td>12/31/19</td>\n",
+       "      <td>11.979</td>\n",
+       "      <td>329064917</td>\n",
+       "      <td>3.941869e+06</td>\n",
+       "      <td>8.782</td>\n",
+       "      <td>2.889848e+06</td>\n",
+       "      <td>NaN</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "         date   Births per 1000 People   Population  Total Number of Births  \\\n",
+       "135  12/31/17                   12.083    325084756            3.927999e+06   \n",
+       "136  12/31/18                   11.968    327096265            3.914688e+06   \n",
+       "137  12/31/18                   11.968    327096265            3.914688e+06   \n",
+       "138  12/31/19                   11.979    329064917            3.941869e+06   \n",
+       "139  12/31/19                   11.979    329064917            3.941869e+06   \n",
+       "\n",
+       "      Deaths per 1000 People  Total Number of Deaths  Divorces  \n",
+       "135                    8.580            2.789227e+06       NaN  \n",
+       "136                    8.685            2.840831e+06       NaN  \n",
+       "137                    8.685            2.840831e+06       NaN  \n",
+       "138                    8.782            2.889848e+06       NaN  \n",
+       "139                    8.782            2.889848e+06       NaN  "
+      ]
+     },
+     "execution_count": 14,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.7.4"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
